@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const https = require('https');
+const Dt = require("../utils/DtUtils");
 
 const getHttps = (opcoes) => {
    return new Promise((resolve, reject) => {
@@ -39,16 +40,77 @@ const getSugestoes = (termo_pesquisa, limite) => {
       getHttps(opcoes)
       .then(json_sugestoes => {
 
-         let jogos = [] 
-         
+         let jogos = [];
+
          for(let i = 0; i < json_sugestoes.results.length; i++){
             let jogo = {};
 
             jogo.nome = json_sugestoes.results[i]["name"];
             jogo.slug = json_sugestoes.results[i]["slug"];
-            jogo.imagem_fundo = json_sugestoes.results[i]["background_image"];
+            jogo.dt_lancamento = Dt.getDtCompleta(json_sugestoes.results[i]["released"])
 
-            jogos.push(jogo);
+            jogo.imagem_fundo = json_sugestoes.results[i].background_image;
+
+            jogo.video = null 
+
+            if(json_sugestoes.results[i].clip){
+               jogo.video = json_sugestoes.results[i].clip.clip;
+
+               if(json_sugestoes.results[i].clip.preview){
+                  jogo.preview_video = json_sugestoes.results[i].clip.preview;
+               }
+            }
+
+            let is_jogo_on_console = false;
+
+            if(json_sugestoes.results[i]["platforms"]){
+               for(let io = 0; io < json_sugestoes.results[i]["platforms"].length ; io++){
+               
+                  const slug_plataforma = json_sugestoes.results[i]["platforms"][io]["platform"]["slug"];
+   
+                  switch (slug_plataforma) {
+                     
+                     case "playstation2":
+                        is_jogo_on_console = true;
+                        break;
+   
+                     case "playstation3":
+                        is_jogo_on_console = true;
+                        break;
+                        
+                     case "playstation4":
+                        is_jogo_on_console = true;
+                        break;
+   
+                     case "xbox360":
+                        is_jogo_on_console = true;
+                        break;
+   
+                     case "xbox-one":
+                        is_jogo_on_console = true;
+                        break;
+   
+                     case "wii":
+                        is_jogo_on_console = true;
+                        break;
+   
+                     case "nintendo-3ds":
+                        is_jogo_on_console = true;
+                        break;
+   
+                     case "nintendo-switch":
+                        is_jogo_on_console = true;
+                        break;
+   
+                     default:
+                        break;
+                  }
+               }
+            }
+
+            if(is_jogo_on_console){
+               jogos.push(jogo);
+            }
          }
 
          resolve(jogos);
@@ -66,7 +128,11 @@ const sugestoes = (termo_pesquisa, limite, callback) => {
 
       getSugestoes(termo_pesquisa, limite)
       .then(sugestoes =>{
-         callback(200, sugestoes)
+         if(sugestoes != []){
+		    callback(200, sugestoes)
+		 } else {
+			callback(404, null) 
+		 }
       })
       .catch(cod => {
          callback(cod, null);

@@ -25,8 +25,14 @@ const verificarFotosBase64 = (req, res, next) => {
                      console.log("Foto grande demais, o limite é de 3mb (3.000.000 de bytes)");
                      res.status(400).end()
       
-                  } else { 
-                     checarFoto(); 
+                  } else {
+                     
+                     if(typeof array_fotos_base64[i] != 'string'){
+                        console.log("O tipo '" + typeof array_fotos_base64[i] + "' não é permitido, o campo do JSON array_fotos_base64 deve ter todos os seus itens com o tipo 'string'")
+                        res.status(400).end()
+                     } else {
+                        checarFoto(); 
+                     }
                   }
                }
             }
@@ -66,13 +72,11 @@ router.get('/:id_anuncio', (req, res)=>{
 
 });
 
-router.get('/:id_anuncio/completo', Auth.verificarToken, (req, res)=>{
+router.get('/:id_anuncio/completo', (req, res)=>{
 
    const id_anuncio = parseInt(req.params.id_anuncio);
 
-   const usuario_token = req.dadosToken.usuario;
-
-   controllerAnuncio.getCompletoById(id_anuncio, usuario_token, (status, json)=>{
+   controllerAnuncio.getCompletoById(id_anuncio, (status, json)=>{
    
       if(status && json){
          res.status(status).json(json).end();

@@ -247,18 +247,12 @@ class ControllerAnuncio {
 
                info_jogo.imagem_fundo = dados_jogo.background_image;
 
-               info_jogo.imagem_fundo_adicional = null
-
-               if(dados_jogo.background_image_additional){
-                  info_jogo.imagem_fundo_adicional = dados_jogo.background_image_additional;
-               }
+               info_jogo.imagem_fundo_adicional = dados_jogo.background_image_additional;
 
                info_jogo.video = null
 
                if(dados_jogo.clip){
                   info_jogo.video = dados_jogo.clip.clip;
-
-                  info_jogo.preview_video = null;
 
                   if(dados_jogo.clip.preview){
                      info_jogo.preview_video = dados_jogo.clip.preview;
@@ -320,30 +314,15 @@ class ControllerAnuncio {
       });
    }
 
-   static getCompletoById(id_anuncio, usuario_token, callback){
+   static getCompletoById(id_anuncio, callback){
 
-      if(!isNaN(id_anuncio)){
-         
-         let opcoes = {};
+      if(!isNaN(id_anuncio)){   
 
-         if(usuario_token.is_admin){
-
-            opcoes = { 
-               where:{
-                     id_anuncio
-                  }
-            };
-            
-         } else {
-
-            opcoes = { 
-               where:{
-                  id_anuncio,
-                  id_usuario: usuario_token.id
+         let opcoes = { 
+            where:{
+                  id_anuncio
                }
-            };
-
-         }
+         };  
 
          this.findOneAnuncio(opcoes, "completo")
          .then((anuncio) => {
@@ -352,7 +331,6 @@ class ControllerAnuncio {
          .catch(cod => {
             callback(cod, null);
          })
-         
          
       } else {
          console.log("Por favor, digite um numero no parametro 'id'")
@@ -1180,6 +1158,7 @@ class ControllerAnuncio {
 
             this.createAnuncio(anuncio_json, array_fotos_base64)
             .then(() => {
+               console.log("Anuncio criado com sucesso!")
                callback(201, null)
             })
             .catch((json) => {
@@ -1337,6 +1316,7 @@ class ControllerAnuncio {
             if(anuncio){
                this.putAnuncio(anuncio_put, anuncio)
                .then(() => {
+                  console.log("Anuncio editado com sucesso!")
                   callback(200, null)
                })
                .catch(json => {
@@ -1361,6 +1341,7 @@ class ControllerAnuncio {
 
             this.putAnuncio(anuncio_put, anuncio)
             .then(() => {
+               console.log("Anuncio editado com sucesso!")
                callback(200, null)
             })
             .catch(json => {
@@ -1387,6 +1368,7 @@ class ControllerAnuncio {
                if(anuncio){
                   this.deleteAnuncio(anuncio)
                   .then(() => {
+                     console.log("Anuncio deletado com sucesso!")
                      callback(200, null)
                   })
                   .catch(cod => {
@@ -1410,6 +1392,7 @@ class ControllerAnuncio {
                
                this.deleteAnuncio(anuncio)
                .then(() => {
+                  console.log("Anuncio deletado com sucesso!")
                   callback(200, null)
                })
                .catch(cod => {
