@@ -134,21 +134,7 @@ class ControllerUsuario{
 
    }
 
-   static todos(callback){
-      Usuario.findAll({ order:[['criado_em', 'desc']] })
-      .then(usuarios => {
-         
-         if(usuarios.length != 0){
-            callback(200, usuarios);
-         } else {
-            callback(404, null);
-         }
-         
-      }) 
-      .catch(err =>{
-         callback(404, null);
-      })
-   }
+   
    
    //FORMATO DO CALLBACK(status, json)
    static getBasicoByIdWithAnuncios(id, qtd, callback){

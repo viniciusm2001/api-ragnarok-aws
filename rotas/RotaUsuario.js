@@ -3,20 +3,6 @@ const router = express.Router();
 const controllerUsuario = require("../controller/ControllerUsuario");
 const Auth = require("../utils/JwtAuth");
 
-router.get("/todos", (req, res)=>{
-
-   controllerUsuario.todos((status, json)=>{
-   
-      if(status && json){
-         res.status(status).json(json).end();
-      } else {
-         res.status(status).end();
-      }
-   
-   })
-
-})
-
 router.get("/:id", (req, res)=>{
 
    const id = parseInt(req.params.id);

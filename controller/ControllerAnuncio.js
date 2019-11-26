@@ -8,6 +8,7 @@ const path = require("path");
 const https = require('https');
 const round = require("../utils/Round");
 const Dt = require("../utils/DtUtils");
+const controllerChat = require("../controller/ControllerChat");
 
 class ControllerAnuncio {
 
@@ -960,17 +961,6 @@ class ControllerAnuncio {
          }
       });
    }
-   
-   //callback(status, json)
-   static buscarTodosSemFiltro(callback){
-
-      this.getAnuncios([['criado_em', 'desc']], {}, 0, 999999, (status, anuncios) => {
-         
-         callback(status, this.organizar(anuncios, {}));
-         
-      });
-         
-   }
  
    static criarFotos(array_fotos_base64, caminho, caminho_relativo){
       return new Promise((resolve, reject) => {
@@ -1123,61 +1113,55 @@ class ControllerAnuncio {
          delete anuncio_json.id_anuncio;
       }
 
-      if(!anuncio.slug_jogo_troca){
-            
-         if(anuncio.preco){
-            anuncio_json.preco = anuncio.preco;
-         } else {
-            err = true;
-            console.log("Caso o anuncio seja de venda, o preço é obrigatorio (não sendo nulo)!!!");
-         }
-
-      } 
-
       if(anuncio.is_jogo){
+         const { id_genero, slug_jogo } = anuncio;
 
-         if(anuncio.preco){
+         if(id_genero && slug_jogo){
 
-            const { id_genero, slug_jogo } = anuncio;
-
-            if(id_genero && slug_jogo){
-
-               anuncio_json.is_jogo = true;
-               anuncio_json.id_genero = id_genero;
-               anuncio_json.slug_jogo = slug_jogo;
-
-            } else {
-               err = true;
-               console.log("Caso o anuncio seja de um jogo para venda, é obrigatorio o id_genero e o slug_jogo (ambos não sendo nulos)!!!");
-            }
-            
-         } else if(anuncio.slug_jogo_troca){
-
-            const { slug_jogo_troca, id_console_troca } = anuncio;
-
-            if(slug_jogo_troca && id_console_troca){
-
-               anuncio_json.slug_jogo_troca = slug_jogo_troca;
-               anuncio_json.id_console_troca = id_console_troca;
-               
-            } else {
-               err = true;
-               console.log("Caso o anuncio seja de troca, é obrigatorio o slug_jogo_troca e id_console_troca (todos não sendo nulos)!!!");
-            }
+            anuncio_json.id_genero = id_genero;
+            anuncio_json.slug_jogo = slug_jogo;
 
          } else {
             err = true;
-            console.log("Um anuncio deve possuir um slug_jogo e um id_genero caso seja para vendas, ou, um slug_jogo_troca e um id_console troca caso seja para troca!!!");
+            console.log("Caso o anuncio seja de um jogo para venda, é obrigatorio o id_genero e o slug_jogo (ambos não sendo nulos)!!!");
+         }
+      }
+
+      if(anuncio.preco){
+         
+         anuncio_json.preco = anuncio.preco;
+         
+      } else if(anuncio.slug_jogo_troca){
+
+         const { slug_jogo_troca, id_console_troca } = anuncio;
+
+         if(slug_jogo_troca && id_console_troca){
+
+            anuncio_json.slug_jogo_troca = slug_jogo_troca;
+            anuncio_json.id_console_troca = id_console_troca;
+            
+         } else {
+            err = true;
+            console.log("Caso o anuncio seja de troca, é obrigatorio o slug_jogo_troca e id_console_troca (todos não sendo nulos)!!!");
          }
 
-      } else if (anuncio.is_acessorio){
-         
+      } else {
+         err = true;
+         console.log("Um anuncio deve possuir um slug_jogo e um id_genero caso seja para vendas, ou, um slug_jogo_troca e um id_console troca caso seja para troca!!!");
+      }
+      
+      if (anuncio.is_jogo) {
+
+         anuncio_json.is_jogo = true;
+
+      } else if(anuncio.is_acessorio){
+
          anuncio_json.is_acessorio = true;
-
-      } else if (anuncio.is_console){
-
-         anuncio_json.is_console = true; 
          
+      } else if(anuncio.is_console){
+
+         anuncio_json.is_console = true;
+
       } else {
          err = true;
          console.log("is_jogo, is_acessorio ou is_console é obrigatório!!!");
@@ -1480,8 +1464,11 @@ class ControllerAnuncio {
                   console.log("Erro ao exluir a pasta no cmainho: " + caminho_fotos);
                   reject(500)
                } else {
-                  anuncio.destroy();
-                  resolve()
+                  controllerChat.excluirChatsByAnuncio(anuncio.id_anuncio)
+                  .then(() => {
+                     anuncio.destroy();
+                     resolve()
+                  })
                }
 
             });

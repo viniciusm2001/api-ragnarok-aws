@@ -119,8 +119,7 @@ class DtUtils {
       const dt_completa = this.getDtCompleta(dt_banco);
 
       return dt_completa + " às " + hora_completa;
-
-      
+ 
    }
 }
 

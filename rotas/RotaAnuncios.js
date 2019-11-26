@@ -164,7 +164,7 @@ router.get("/usuario/:id_usuario/:jogos/:consoles/:acessorios", (req, res)=>{
 
 router.get("/todos", (req, res)=>{
 
-   controllerAnuncio.buscarTodosSemFiltro((status, json)=>{
+   controllerAnuncio.buscarTodosByIdUsuarioFiltrado(params_busca, (status, json)=>{
 
       if(status && json){
          res.status(status).json(json).end();

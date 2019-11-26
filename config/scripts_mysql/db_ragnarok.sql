@@ -36,7 +36,6 @@ INSERT INTO tbl_usuario VALUES (0, "Carla", "carla.linda.123@hotmail.com", "b943
 INSERT INTO tbl_usuario VALUES (0, "Jeimer", "jeimer_monstrao@bol.com.br", "0fe1926d699bf7f8149ae31ea507d3f01416cfe318391c1bae536b70c9a67cf83421cda641ee543264b3b4e13b2c6d060e7ca5b0b96e008c7ef2db582c895ddc", "SP, São Paulo", -23.5506, -46.6366, 0, 0, "01001-001", now(), now(), null);
 -- senha hotdog123
 INSERT INTO tbl_usuario VALUES (0, "Sausage Dog", "sausage@yahoo.com", "ac27c68ff3b3f6122e67d21fde593e45757143baba0516a5a87709aebc854a53eb94f16342952552a9d08c381429aeab97d07243760a71803c2de8dc2a177121", "MS, Campo Grande", -20.4652, -54.6312, 0, 0, "79002-070", now(), now(), null);
-
 -- senha 123456
 INSERT INTO tbl_usuario VALUES (0, "Chimba", "chimba@outlook.com", "ba3253876aed6bc22d4a6ff53d8406c6ad864195ed144ab5c87621b6c233b548baeae6956df346ec8c17f5ea10f35ee3cbc514797ed7ddd3145464e2a0bab413", "AM, Cordajás", -1.3509, -48.4581, 0, 0, "66635-110", now(), now(), null);
 
@@ -64,7 +63,7 @@ CREATE TABLE tbl_console(
 	atualizado_em TIMESTAMP,
 	excluido_em TIMESTAMP NULL,
 
-	CONSTRAINT fk_id_fabricante_on_console
+	CONSTRAINT fk_id_fabricante_on_tbl_console
 	FOREIGN KEY (id_fabricante)
 	REFERENCES tbl_fabricante(id_fabricante)
 );
@@ -134,19 +133,19 @@ CREATE TABLE tbl_anuncio(
 	atualizado_em TIMESTAMP,
 	excluido_em TIMESTAMP NULL,
 
-	CONSTRAINT fk_id_usuario_on_anuncio
+	CONSTRAINT fk_id_usuario_on_tbl_anuncio
 	FOREIGN KEY (id_usuario)
 	REFERENCES tbl_usuario(id),
 	
-	CONSTRAINT fk_id_console_troca_on_anuncio
+	CONSTRAINT fk_id_console_troca_on_tbl_anuncio
 	FOREIGN KEY (id_console_troca)
 	REFERENCES tbl_console(id_console),
 
-   CONSTRAINT fk_id_console_on_anuncio
+   CONSTRAINT fk_id_console_on_tbl_anuncio
 	FOREIGN KEY (id_console)
 	REFERENCES tbl_console(id_console),
 
-	CONSTRAINT fk_id_genero_on_anuncio
+	CONSTRAINT fk_id_genero_on_tbl_anuncio
 	FOREIGN KEY (id_genero)
 	REFERENCES tbl_genero(id_genero)
 );
@@ -317,4 +316,162 @@ INSERT INTO tbl_anuncio VALUES
 	1,
    '{"jogo_troca":{"nota_metacritic":null,"nota_geral":0,"nome":"Miner Ultra Adventures","dt_lancamento":"27 de Janeiro de 2017","imagem_fundo":"https://media.rawg.io/media/screenshots/ee6/ee659851099b2cdca5d583880386e8cc.jpg","imagem_fundo_adicional":"https://media.rawg.io/media/screenshots/6e3/6e31e98eda2f1cb4d9461c814f1501c3.jpg","video":null,"desenvolvedoras":["Old School Blender Addicted"],"publishers":["Manic Mind Game Lab"]},"jogo":{"nota_metacritic":61,"nota_geral":3.7,"nome":"No Mans Sky","dt_lancamento":"09 de Agosto de 2016","imagem_fundo":"https://media.rawg.io/media/games/174/1743b3dd185bda4a7be349347d4064df.jpg","imagem_fundo_adicional":"https://media.rawg.io/media/screenshots/914/914ad9dcc3603508f0200ed8073d00f4.jpg","video":"https://media.rawg.io/media/stories-640/7f6/7f6303ed351e6c2454ed909a90815d1d.mp4","preview_video":"https://media.rawg.io/media/stories-previews/322/322a68b347ebd990240b4b0a22b4a85b.jpg","desenvolvedoras":["Hello Games","Hello Games LTD"],"publishers":["Hello Games"]}}', 
    now(), now(), null
+);
+
+-- ESTRUTRA DO CHAT E DAS MENSAGENS
+
+CREATE TABLE tbl_chat(
+	id_chat INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+   id_anuncio INT NOT NULL,
+   c_foto VARCHAR(300) NOT NULL,
+   criado_em TIMESTAMP,
+	atualizado_em TIMESTAMP,
+   excluido_em TIMESTAMP NULL,
+	is_ativo TINYINT NOT NULL,
+
+   CONSTRAINT fk_id_anuncio_on_tbl_chat
+	FOREIGN KEY (id_anuncio)
+	REFERENCES tbl_anuncio(id_anuncio)
+);
+
+-- CRIANDO CHAT SOBRE O PRIMEIRO ANUNCIO, O DO GTA SAN ANDREAS
+INSERT INTO tbl_chat VALUES (0, 1, 'fotos/1/0.jpg', now(), now(), NULL, 1);
+
+INSERT INTO tbl_chat VALUES (0, 3, 'fotos/3/0.jpg', now(), now(), NULL, 1);
+
+CREATE TABLE tbl_chat_usuario(
+   id_chat_usuario INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+	id_chat INT NOT NULL,
+   id_usuario INT NOT NULL,
+   criado_em TIMESTAMP,
+	atualizado_em TIMESTAMP,
+   excluido_em TIMESTAMP NULL,
+   
+   CONSTRAINT fk_id_usuario_on_tbl_chat_usuario
+	FOREIGN KEY (id_usuario)
+	REFERENCES tbl_usuario(id),
+
+	CONSTRAINT fk_id_chat_on_tbl_chat_usuario
+	FOREIGN KEY (id_chat)
+	REFERENCES tbl_chat(id_chat)
+);
+
+-- ADICIONANDO A CARLA (DONA DO ANUNCIO), E JEIMER AO CHAT
+INSERT INTO tbl_chat_usuario VALUES (0, 1, 5, now(), now(), NULL);
+INSERT INTO tbl_chat_usuario VALUES (0, 1, 6, now(), now(), NULL);
+
+INSERT INTO tbl_chat_usuario VALUES (0, 2, 5, now(), now(), NULL);
+INSERT INTO tbl_chat_usuario VALUES (0, 2, 7, now(), now(), NULL);
+
+CREATE TABLE tbl_mensagem(
+   id_mensagem INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+   para INT NOT NULL,
+   mensagem TEXT NOT NULL,
+   visualizada TINYINT NOT NULL,
+   criado_em TIMESTAMP,
+	atualizado_em TIMESTAMP,
+   excluido_em TIMESTAMP NULL,
+
+   CONSTRAINT fk_id_chat_usuario_on_tbl_mensagem
+	FOREIGN KEY (para)
+	REFERENCES tbl_chat_usuario(id_chat_usuario)
+);
+
+-- ADICIONANDO ALGUMAS MENSAGENS AO CHAT
+INSERT INTO tbl_mensagem VALUES (0, 1, "Oi Carla, tudo bem?", 1, now(), now(), NULL);
+INSERT INTO tbl_mensagem VALUES (0, 2, "OLÁ Jeimer, está tudo sim", 1, now(), now(), NULL);
+INSERT INTO tbl_mensagem VALUES (0, 1, "Faz rolo desse gta num moto g2 trincado?", 0, now(), now(), NULL);
+
+INSERT INTO tbl_mensagem VALUES (0, 3, "Oi carla", 0, now(), now(), NULL);
+INSERT INTO tbl_mensagem VALUES (0, 3, "Hoje é terça feira?", 0, now(), now(), NULL);
+
+CREATE TABLE tbl_notificacao(
+   id_notificacao INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+   id_chat  INT NOT NULL,
+   para_usuario  INT NOT NULL,
+   info TEXT NOT NULL,
+   is_mensagem TINYINT NOT NULL,
+   is_chat TINYINT NOT NULL,
+   visualizada TINYINT NOT NULL,
+   criado_em TIMESTAMP,
+	atualizado_em TIMESTAMP,
+   excluido_em TIMESTAMP NULL,
+   
+   CONSTRAINT fk_id_usuario_on_tbl_notificacao
+	FOREIGN KEY (para_usuario)
+	REFERENCES tbl_usuario(id),
+
+	CONSTRAINT fk_id_chat_on_tbl_notificacao
+	FOREIGN KEY (id_chat)
+	REFERENCES tbl_chat(id_chat)
+);
+
+INSERT INTO tbl_notificacao 
+VALUES (
+   0, 
+   1, 
+   5, 
+   "O usuario Jeimer iniciou um chat de troca com você",
+   0,
+   1,
+   0,
+   now(),
+   now(),
+   null
+);
+
+INSERT INTO tbl_notificacao 
+VALUES (
+   0, 
+   1, 
+   5, 
+   "Jeimer enviou 'Faz rolo desse gta num moto g2 trincado?'",
+   1,
+   0,
+   0,
+   now(),
+   now(),
+   null
+);
+
+INSERT INTO tbl_notificacao 
+VALUES (
+   0, 
+   2, 
+   5, 
+   "O usuario Sausage Dog iniciou um chat com você",
+   0,
+   1,
+   0,
+   now(),
+   now(),
+   null
+);
+
+INSERT INTO tbl_notificacao 
+VALUES (
+   0, 
+   2, 
+   5, 
+   "Sausage Dog enviou 'Oi carla'",
+   1,
+   0,
+   0,
+   now(),
+   now(),
+   null
+);
+
+INSERT INTO tbl_notificacao 
+VALUES (
+   0, 
+   2, 
+   5, 
+   "Sausage Dog enviou 'Hoje é terça feira?'",
+   1,
+   0,
+   0,
+   now(),
+   now(),
+   null
 );

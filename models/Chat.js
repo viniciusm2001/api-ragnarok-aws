@@ -5,29 +5,35 @@ class Chat extends Sequelize.Model { };
 
 Chat.init({
    id_chat:{
-      type:Sequelize.INTEGER,
+      type: Sequelize.INTEGER,
       primaryKey: true,
       autoIncrement: true,
       allowNull: false
    },
    id_anuncio:{
-      type:Sequelize.INTEGER,
+      type: Sequelize.INTEGER,
       allowNull: false
    },
-   id_usuario_dono:{
-      type:Sequelize.INTEGER,
+   c_foto:{
+      type: Sequelize.STRING(300),
       allowNull: false
    },
-   id_usuario_interessado:{
-      type:Sequelize.INTEGER,
-      allowNull: false
-   },
-   c_foto_conversa:{
-      type:Sequelize.STRING(300),
+   is_ativo:{
+      type: Sequelize.BOOLEAN,
       allowNull: false
    }
 },{
+   defaultScope: {
+      attributes: { 
+         exclude: [
+            'criado_em',
+            'atualizado_em',
+            'excluido_em'
+         ] 
+      }
+   },
    createdAt: 'criado_em',
+   updatedAt: 'atualizado_em',
    deletedAt: 'excluido_em',
    timestamps: true,
    underscored: true,

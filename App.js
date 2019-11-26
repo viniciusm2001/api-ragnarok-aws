@@ -1,9 +1,18 @@
 //DEFINE AS VARIAVEIS
 const express = require('express');
 const app = express();
+const http = require("http").createServer();
+let io = require("socket.io")(http);
 const cors = require("cors");
 const con = require("./config/conexao");
-const porta = 3107;
+const ControllerSocketIo = require("./controller/ControllerSocketIo");
+
+//CONFIGURA O SOCKET.IO
+io = ControllerSocketIo.get(io);
+
+//DECLARA AS PORTAS DO SERVIDORES
+const porta_api = 3107;
+const porta_chat = 3108;
 
 //'CONFIGURANDO' O CORS PARA NÃO HAVER
 //ERROS DE CONEXÃO CAUSADOS PELO MESMO
@@ -34,6 +43,7 @@ app.use("/anuncios", require("./rotas/RotaAnuncios"));
 app.use("/genero", require("./rotas/RotaGenero"));
 app.use("/console", require("./rotas/RotaConsole"));
 app.use("/sugestoes", require("./rotas/RotaSugestoes"));
+app.use("/chat", require("./rotas/RotaChat"));
 
 //ADICIONA A ROTA PARA 'SERVIR' AS FOTOS
 app.use("/fotos", express.static(__dirname + "/fotos"));
@@ -44,8 +54,8 @@ app.get("/", (req, res)=>{
    res.send("Clique <a href='http://doc-api-ragnarok.surge.sh' target='_blank'>aqui</a> para acessar a documentação da api!")
 });
 
-app.listen(porta, () => {
-   console.log("Ouvindo na porta " + porta);
+app.listen(porta_api, () => {
+   console.log("API ouvindo na porta " + porta_api);
 
    //VERIFICA A CONEXÃO COM O BANCO AO INICIAR
    con
@@ -57,3 +67,7 @@ app.listen(porta, () => {
        console.error("Erro ao efetuar conexão com o banco: ", err);
      });
 });
+
+http.listen(porta_chat, () => {
+   console.log("Chat ouvindo na porta " + porta_chat);
+})
