@@ -176,8 +176,8 @@ INSERT INTO tbl_anuncio VALUES
 (
 	0,
 	6,
-	"Rattatouile pra ps2",
-	"Ratatouille la... pra xcaixa 360",
+	"Rattatouile pra xbox",
+	"Ratatouille pra xbox 360 em boas condições",
 	'["fotos/2/0.jpg","fotos/2/1.jpg","fotos/2/2.jpg"]',
 	4,
 	null,
@@ -198,7 +198,7 @@ INSERT INTO tbl_anuncio VALUES
 	0,
 	7,
 	"Jogo da barbie",
-	"Barbie, pro 3ds ;)",
+	"jogo da barbie pro 3ds no estado",
 	'["fotos/3/0.jpg","fotos/3/1.jpg","fotos/3/2.jpg"]',
 	7,
 	null,
@@ -218,8 +218,8 @@ INSERT INTO tbl_anuncio VALUES
 (
 	0,
 	8,
-	"Controle de xbox 360 feio",
-	"Controle usado pouco de xbox 360",
+	"Controle de xbox 360",
+	"Controle pouco usado de xbox 360",
 	'["fotos/4/0.jpg","fotos/4/1.jpg","fotos/4/2.jpg"]',
 	4,
 	null,
@@ -239,8 +239,8 @@ INSERT INTO tbl_anuncio VALUES
 (
 	0,
 	5,
-	"headset de play 3 feio",
-	"headset usado pra demais de play 3",
+	"headset de play 3",
+	"headset muito usado de ps3",
 	'["fotos/5/0.jpg","fotos/5/1.jpg","fotos/5/2.jpg"]',
 	2,
 	null,
@@ -260,7 +260,7 @@ INSERT INTO tbl_anuncio VALUES
 (
 	0,
 	6,
-	"um nitendo switch filézin",
+	"um nitendo switch em otimo estado",
 	null,
 	'["fotos/6/0.jpg","fotos/6/1.jpg","fotos/6/2.jpg"]',
 	8,
@@ -334,11 +334,6 @@ CREATE TABLE tbl_chat(
 	REFERENCES tbl_anuncio(id_anuncio)
 );
 
--- CRIANDO CHAT SOBRE O PRIMEIRO ANUNCIO, O DO GTA SAN ANDREAS
-INSERT INTO tbl_chat VALUES (0, 1, 'fotos/1/0.jpg', now(), now(), NULL, 1);
-
-INSERT INTO tbl_chat VALUES (0, 3, 'fotos/3/0.jpg', now(), now(), NULL, 1);
-
 CREATE TABLE tbl_chat_usuario(
    id_chat_usuario INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
 	id_chat INT NOT NULL,
@@ -356,13 +351,6 @@ CREATE TABLE tbl_chat_usuario(
 	REFERENCES tbl_chat(id_chat)
 );
 
--- ADICIONANDO A CARLA (DONA DO ANUNCIO), E JEIMER AO CHAT
-INSERT INTO tbl_chat_usuario VALUES (0, 1, 5, now(), now(), NULL);
-INSERT INTO tbl_chat_usuario VALUES (0, 1, 6, now(), now(), NULL);
-
-INSERT INTO tbl_chat_usuario VALUES (0, 2, 5, now(), now(), NULL);
-INSERT INTO tbl_chat_usuario VALUES (0, 2, 7, now(), now(), NULL);
-
 CREATE TABLE tbl_mensagem(
    id_mensagem INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
    para INT NOT NULL,
@@ -376,14 +364,6 @@ CREATE TABLE tbl_mensagem(
 	FOREIGN KEY (para)
 	REFERENCES tbl_chat_usuario(id_chat_usuario)
 );
-
--- ADICIONANDO ALGUMAS MENSAGENS AO CHAT
-INSERT INTO tbl_mensagem VALUES (0, 1, "Oi Carla, tudo bem?", 1, now(), now(), NULL);
-INSERT INTO tbl_mensagem VALUES (0, 2, "OLÁ Jeimer, está tudo sim", 1, now(), now(), NULL);
-INSERT INTO tbl_mensagem VALUES (0, 1, "Faz rolo desse gta num moto g2 trincado?", 0, now(), now(), NULL);
-
-INSERT INTO tbl_mensagem VALUES (0, 3, "Oi carla", 0, now(), now(), NULL);
-INSERT INTO tbl_mensagem VALUES (0, 3, "Hoje é terça feira?", 0, now(), now(), NULL);
 
 CREATE TABLE tbl_notificacao(
    id_notificacao INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
@@ -404,74 +384,4 @@ CREATE TABLE tbl_notificacao(
 	CONSTRAINT fk_id_chat_on_tbl_notificacao
 	FOREIGN KEY (id_chat)
 	REFERENCES tbl_chat(id_chat)
-);
-
-INSERT INTO tbl_notificacao 
-VALUES (
-   0, 
-   1, 
-   5, 
-   "O usuario Jeimer iniciou um chat de troca com você",
-   0,
-   1,
-   0,
-   now(),
-   now(),
-   null
-);
-
-INSERT INTO tbl_notificacao 
-VALUES (
-   0, 
-   1, 
-   5, 
-   "Jeimer enviou 'Faz rolo desse gta num moto g2 trincado?'",
-   1,
-   0,
-   0,
-   now(),
-   now(),
-   null
-);
-
-INSERT INTO tbl_notificacao 
-VALUES (
-   0, 
-   2, 
-   5, 
-   "O usuario Sausage Dog iniciou um chat com você",
-   0,
-   1,
-   0,
-   now(),
-   now(),
-   null
-);
-
-INSERT INTO tbl_notificacao 
-VALUES (
-   0, 
-   2, 
-   5, 
-   "Sausage Dog enviou 'Oi carla'",
-   1,
-   0,
-   0,
-   now(),
-   now(),
-   null
-);
-
-INSERT INTO tbl_notificacao 
-VALUES (
-   0, 
-   2, 
-   5, 
-   "Sausage Dog enviou 'Hoje é terça feira?'",
-   1,
-   0,
-   0,
-   now(),
-   now(),
-   null
 );
